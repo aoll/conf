@@ -1,0 +1,367 @@
+(defun foo (bar)
+    (1+ bar))(set-language-environment "UTF-8")
+;;ecrit les changement par customize dans .emacs-custom.el et indique que c'est .emacs-custom.el le fichier custom
+;;(setq custom-file "~/.emacs-custom.el")
+;;charge les reglage duc fichier custom, en l'occrurence .emacs-custom.el
+;;(load custom-file)
+
+;;??
+(menu-bar-mode -1)
+;;afficher l'heure
+(display-time-mode t)
+
+;;activer les colonnes
+(column-number-mode t)
+
+;;style d'ecriture
+;;(setq c-default-style "gnu")
+;;indentation: ici de 8
+;;(setq c-basic-offset 8)
+;;tab auto, after new line
+;(setq c-auto-newline t)
+;; M-g pour aller à la x-ième ligne
+(global-set-key [(meta g)] 'goto-line)
+
+;;------------------------------------------diver
+; Mettre tous les fichiers de sauvegarde dans un seul répertoire
+(setq backup-directory-alist
+    '(("." . "~/.emacs-backup-files/")))
+; Pour ne pas avoir à taper en entier la réponse yes/no
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;;divers trucs usuels
+
+;;begin----racourci---(--{----[---"----'----------------------------------------
+;;;;a adapter en fonction du clavier querty!!!!!!!!!!!!!!!!!!!
+(defun doublep()
+  "double parentheses"
+  (interactive)
+  (insert "()")
+  (backward-char 1)
+)
+;;POUR LE MOMENT LE RACOURCI NE FONCTIONNE PAS SURMEN DEJA PRIS
+(global-set-key (kbd "(" ) 'doublep)
+
+(defun doublec()
+  "double crochet"
+  (interactive)
+  (insert "[]")
+  (backward-char 1)
+)
+(global-set-key (kbd "[" ) 'doublec)
+
+(defun doubleg()
+  "double guillemets"
+  (interactive)
+  (insert "\"\"")
+  (backward-char 1)
+)
+(global-set-key (kbd "\"" ) 'doubleg)
+
+(defun doublecote()
+  "double cote"
+  (interactive)
+  (insert "\'\'")
+  (backward-char 1)
+)
+(global-set-key (kbd "\'" ) 'doublecote)
+
+(defun doubleaco()
+  "double acolade"
+  (interactive)
+  (insert "{\n\t\n}")
+  (backward-char 2)
+)
+;;POUR LE MOMENT LE RACOURCI NE FONCTIONNE PAS SURMEN DEJA PRIS
+(global-set-key (kbd "{" ) 'doubleaco)
+
+;;
+;;end------racourci---(-------[---"----'----------------------------------------
+
+
+;;begin---------prototype----------while-------if----else-if----else------------
+;;
+(defun tab_col (n)
+  (if (> n 0)
+    (insert "\t"))
+  (if (> n 0)
+   (tab_col (- n 8)))
+)
+(defun acolade_tab (ar)
+  (tab_col ar)
+  (insert "{\n")
+  (tab_col (+ ar 8))
+  (insert "\n")
+  (tab_col ar)
+  (insert "}")
+)
+;;WHILE
+;;commande interactive (M-x, wh)
+(defun wh()
+  "wh insert le prototype d.un while"
+  (interactive)
+  (setq col (current-column))
+  (insert "while (")
+  (setq col_ar (point))
+  (insert ")\n")
+   (acolade_tab col)
+   (backward-char (-(point) col_ar))
+  )
+;;racourci pour la commande interactive 'wh
+(global-set-key (kbd "M-w ") 'wh)
+
+;;IF
+;;commande interactive (M-x, i)
+(defun i()
+  "i insert le prototype d.un if"
+  (interactive)
+  (setq col (current-column))
+  (insert "if (")
+  (setq col_ar (point))
+  (insert ")\n")
+   (acolade_tab col)
+   (backward-char (-(point) col_ar))
+  )
+
+;;else if
+;;commande interactive (M-x, ei)
+(defun ei()
+  "ei insert le prototype d.un else if"
+  (interactive)
+  (setq col (current-column))
+  (insert "else if (")
+  (setq col_ar (point))
+  (insert ")\n")
+   (acolade_tab col)
+   (backward-char (-(point) col_ar))
+  )
+
+;;ELSE
+;;commande interactive (M-x, e)
+(defun e()
+  "e insert le prototype d.un else"
+  (interactive)
+  (setq col (current-column))
+  (insert "else\n")
+  (setq col_ar (point))
+   (acolade_tab col)
+   (backward-char (+(/ (current-column) 8) 2))
+  )
+;;
+;;end---------prototype----------while-------if----else-if----else--------------
+
+;;begin---racourci--return------------------------------------------------------
+;;
+(defun r()
+  "r insert: return ()"
+  (interactive)
+  (insert "return ();")
+  (backward-char 2)
+)
+;;(global-set-key (kbd "M-r" ) 'r)
+;;
+;;end----racourci--return-------------------------------------------------------
+
+
+;;begin--prototype--function--int--char*--void----------------------------------
+;;
+
+(defun it()
+  "insert proto function de type int"
+  (interactive)
+  (insert "int\tft_")
+  (setq pt (point))
+  (insert "()\n{\n\t\n\treturn ();\n}")
+  (backward-char (-(point) pt))
+)
+
+(defun cr()
+  "insert proto function de type char *"
+  (interactive)
+  (insert "char\t*ft_")
+  (setq pt (point))
+  (insert "()\n{\n\t\n\treturn ();\n}")
+  (backward-char (-(point) pt))
+)
+
+(defun vd()
+  "insert proto function de type void"
+  (interactive)
+  (insert "void\tft_")
+  (setq pt (point))
+  (insert "()\n{\n\t\n\treturn ;\n}")
+  (backward-char (-(point) pt))
+)
+
+;;begin---prototype---main------maina-------------------------------------------
+;;
+(defun main()
+  "main insert un prototype de main (void) .c"
+  (interactive)
+  (insert "int\tmain(void)\n{\n\t")
+  (setq col_ar (point))
+  (insert "\n\treturn (0);\n}")
+  (backward-char (-(point) col_ar))
+)
+
+(defun maina()
+  "maina insert un prototype de main (int ac, char **av) .c"
+  (interactive)
+  (insert "int\tmain(int ac, char **av)\n{\n\t")
+  (setq col_ar (point))
+  (insert "\n\treturn (0);\n}")
+  (backward-char (-(point) col_ar))
+)
+;;
+;;end---prototype---main---------maina------------------------------------------
+
+;;begin-racourci------myic-----include<>-struct--stdlib.unistd----ifndif--------
+;;
+(defun myic()
+  "insert #include \"mon_projet_en_cours.h\" a modifier en fonction du projet
+a placer en en-tete des .c"
+  (interactive)
+  (insert "#include \"mon_projet_en_cours.h\"\n\n")
+)
+
+(defun ifn()
+  "protection des .h #ifndef, #define, #endif"
+  (interactive)
+  (insert " #ifndef _H")
+  (setq pt (point))
+  (insert "\n #define _H\n\n#endif")
+  (backward-char (-(point) (- pt 2)))
+)
+
+(defun ic()
+  "insert #include <.h> (appel de librairy)"
+  (interactive)
+  (insert "#include <.h>")
+  (backward-char 3)
+)
+
+(defun inc()
+  "insert #include <unistd.h> <stdlib.h>"
+  (interactive)
+  (insert "#include <unistd.h>\n#include <stdlib.h>\n")
+)
+
+(defun struct()
+  "insert proto struct"
+  (interactive)
+  (insert "typedef struct s_ t_;\nstruct s_\n{\n\t\n};")
+  (backward-char 21)
+)
+;;
+;;end---racourci------myic-----include<>---stdlib.unistd----ifndif--------------
+
+;;racourci----proto---malloc---ecrire---la--variable--puis--apeller-la-fonction-
+;;
+(defun modulo (ar)
+  (if (> ar 8)
+    (setq ar (- ar 8)))
+  (if (> ar 8)
+      (modulo ar))
+  (if (< ar 8) (setq ar ar))
+)
+
+(defun ma()
+  "insert un proto if malloc=echec return NULL "
+  (interactive)
+  (setq col (current-column))
+  (setq len (modulo col))
+  (backward-char len)
+  (insert "if (!(")
+  (forward-char len)
+  (insert " = malloc(sizeof(")
+  (setq pt (point))
+  (insert "))))\n")
+  (tab_col (- col len))
+  (insert "\treturn (NULL);")
+  (backward-char (- (point) pt))
+)
+;;
+;;racourci----proto---malloc---ecrire---la--variable--puis--apeller-la-fonction-
+
+;;racourci---proto--var---static---int-counter---------------------------------------
+;;
+(defun sti()
+  "static int	 = 0;"
+  (interactive)
+  (insert "static int\t = 0;")
+  (backward-char 5)
+)
+
+;;begin--racourci---debug------&-------print-------------------------------------
+;;
+
+(defun ps()
+  "insert printf pour char *"
+  (interactive)
+  (insert "printf(\"%s\\n\", );")
+  (backward-char 2)
+)
+
+(defun pd()
+  "insert printf pour int"
+  (interactive)
+  (insert "printf(\"%d\\n\", );")
+  (backward-char 2)
+)
+;;
+;;end--racourci---debug------&-------print---------------------------------------
+
+;;begin---racourci-list---------------------------------------------------------
+;;
+(defun ln() 
+  "racourci ->next"
+  (interactive)
+  (insert "->next")
+)
+
+(defun lp() 
+  "racourci ->prev"
+  (interactive)
+  (insert "->prev")
+)
+;;
+;;end---racourci-list-----------------------------------------------------------
+
+(defun modjnhkulo (ar)
+  (if (> ar 8)
+    (setq ar (- ar 8)))
+  (if (> ar 8)
+      (modulo ar))
+  (if (< ar 8) (setq ar ar))
+)
+
+;;begin--racourci--header-------------------------------------------------------
+;;
+(defun nb_char (str cr nb)
+  "prend une string et un char retourne le nombre de fois que le char est find"
+  (insert "LOOP\n")
+  (if (< cr 0) 
+      (setq nb nb) )
+  
+      (if (= (aref str cr) 101) 
+	  (setq nb (+ nb 1)) ) 
+  
+      (if (> cr 0)
+	  (nb_char str (- cr 1) nb))
+ 
+      
+  ;;  (setq nb (+ nb (nb_char str (- cr 1) nb)))
+    ;;)
+  ;;(setq nb nb)
+ ;; (if (!= (elt str cr) '/') (0))
+)
+
+(defun hd()
+  "insert header norme 42"
+  (interactive)
+  (insert buffer-file-truename)
+  (setq test_c  (nb_char buffer-file-truename (- (length buffer-file-truename) 1) 0))
+ ;; (if (= (aref "/lo" 0) 47)  
+  (if (> test_c 0) 
+  (insert "OKKIDOKI") )
+)
